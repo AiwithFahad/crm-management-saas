@@ -1,6 +1,7 @@
+<?php $cu = function_exists('current_user') ? (current_user() ?? []) : []; $nm = trim((string)($cu['name'] ?? '')); $ini = ''; foreach (array_slice(preg_split('/\s+/', $nm) ?: [], 0, 2) as $w) { if ($w !== '') $ini .= strtoupper(substr($w, 0, 1)); } if ($ini === '') $ini = 'U'; ?>
 <nav class="sidebar d-flex flex-column p-3">
-<a class="brand text-white text-decoration-none fs-5 fw-bold mb-4" href="index.php"><i class="bi bi-shield-lock"></i> Super Admin</a>
+<a class="brand text-white text-decoration-none fs-5 fw-bold mb-4" href="index.php"><span class="brand-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3.2 8.2-7 10-3.8-1.8-7-5-7-10V6l7-3z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="M9 12l2.2 2.2L15.5 10" stroke="#bae6fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="brand-text">Super Admin<small>CRM Pro Platform</small></span></a>
 <?php foreach([['index.php','Platform','bi-speedometer2'],['tenants.php','Tenants','bi-buildings'],['plans.php','Plans','bi-layers'],['subscriptions.php','Subscriptions','bi-credit-card'],['coupons.php','Coupons','bi-ticket-percent'],['tickets.php','Support Tickets','bi-life-preserver'],['announcements.php','Announcements','bi-megaphone'],['settings.php','Settings','bi-gear']] as [$f,$l,$i]): ?>
 <a class="nav-link <?= ($active??'')===$l?'active':'' ?>" href="<?= $f ?>"><i class="bi <?= $i ?>"></i> <?= $l ?></a><?php endforeach; ?>
-<div class="mt-auto small text-white-50"><?= e(current_user()['name'] ?? '') ?></div>
+<div class="mt-auto"><div class="sidebar-user"><span class="avatar-initials"><?= e($ini) ?></span><span class="who"><span class="nm"><?= e(current_user()['name'] ?? '') ?></span></span></div></div>
 <a class="nav-link" href="../auth/logout.php"><i class="bi bi-box-arrow-right"></i> Logout</a></nav>

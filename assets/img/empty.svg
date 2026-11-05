@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" fill="none" role="img" aria-label="Empty state illustration">
+  <defs>
+    <linearGradient id="box" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#dbeafe"/><stop offset="1" stop-color="#e0e7ff"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2563eb"/><stop offset="1" stop-color="#4f46e5"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="160" cy="206" rx="104" ry="14" fill="#e0e7ff" opacity=".7"/>
+  <path d="M84 108 L160 76 L236 108 L236 178 Q236 190 224 190 L96 190 Q84 190 84 178 Z" fill="url(#box)"/>
+  <path d="M84 108 L160 140 L236 108 L214 88 L160 112 L106 88 Z" fill="#bfdbfe"/>
+  <rect x="128" y="148" width="64" height="10" rx="5" fill="#ffffff" opacity=".85"/>
+  <rect x="142" y="164" width="36" height="8" rx="4" fill="#ffffff" opacity=".65"/>
+  <circle cx="226" cy="58" r="30" fill="#ffffff" stroke="url(#ring)" stroke-width="7"/>
+  <path d="M248 80 L272 104" stroke="url(#ring)" stroke-width="10" stroke-linecap="round"/>
+  <path d="M214 58 h24 M226 46 v24" stroke="#93c5fd" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 9"/>
+  <circle cx="62" cy="52" r="7" fill="#818cf8"/><circle cx="272" cy="150" r="5" fill="#38bdf8"/><circle cx="46" cy="140" r="5" fill="#c7d7fe"/>
+</svg>

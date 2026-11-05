@@ -10,6 +10,12 @@ $pendingTasks=cnt($pdo,'SELECT COUNT(*) FROM tasks WHERE tenant_id=? AND status!
 $s=$pdo->prepare('SELECT DATE_FORMAT(created_at,"%b") m, COUNT(*) c FROM leads WHERE tenant_id=? GROUP BY MONTH(created_at) ORDER BY MONTH(created_at)'); $s->execute([$tid]); $leadRows=$s->fetchAll();
 $s=$pdo->prepare('SELECT * FROM activities WHERE tenant_id=? ORDER BY id DESC LIMIT 8'); $s->execute([$tid]); $acts=$s->fetchAll();
 include __DIR__ . '/includes/header.php'; ?>
+<section class="hero mb-4"><div class="row g-0 align-items-center"><div class="col-lg-7"><div class="hero-body">
+<span class="hero-chip"><i class="bi bi-stars"></i> Sales Intelligence</span>
+<h2>Welcome back, <?= e($user['name'] ?? '') ?> 👋</h2>
+<p>Your pipeline at a glance — track customers, move deals forward and never miss a follow-up. Revenue, conversion and team activity update in real time from your workspace data.</p>
+<div class="d-flex flex-wrap gap-2"><a class="btn btn-light" href="customers.php"><i class="bi bi-person-plus"></i> Add customer</a><a class="btn btn-outline-light" href="deals.php"><i class="bi bi-kanban"></i> Open pipeline</a><a class="btn btn-outline-light" href="reports.php"><i class="bi bi-bar-chart"></i> View reports</a></div>
+</div></div><div class="col-lg-5 d-none d-lg-flex justify-content-center p-3"><img class="hero-art" src="assets/img/hero.svg" alt="Sales dashboard illustration" loading="lazy"></div></div></section>
 <div class="row g-3">
 <?php foreach ([['Customers',$totalCustomers,'bi-people'],['Leads',$totalLeads,'bi-funnel'],['Deals',$totalDeals,'bi-kanban'],['Revenue',money($revenue),'bi-cash-stack'],['Conversion',$conversion.'%','bi-percent'],['Pending tasks',$pendingTasks,'bi-clock']] as [$l,$v,$i]): ?>
 <div class="col-md-4 col-xl-2"><div class="card stat-card p-3"><i class="bi <?= $i ?> fs-4 text-primary"></i><div class="fs-4 fw-bold"><?= e((string)$v) ?></div><div class="text-muted small"><?= e($l) ?></div></div></div><?php endforeach; ?>
