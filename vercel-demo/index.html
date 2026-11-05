@@ -1,0 +1,106 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CRM Pro — SaaS CRM Demo</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{--brand:#4f46e5}body{background:#f6f7fb;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body.dark{background:#0f172a;color:#e5e7eb}body.dark .card,body.dark .deal{background:#1e293b;color:#e5e7eb;border-color:#334155}body.dark .table{color:#e5e7eb}body.dark .form-control,body.dark .form-select{background:#0f172a;color:#e5e7eb;border-color:#334155}
+.layout{display:flex;min-height:100vh}.sidebar{width:238px;background:linear-gradient(180deg,#312e81,#4f46e5);position:sticky;top:0;height:100vh;padding:1rem}
+.sidebar a{color:#e0e7ff;display:block;padding:.55rem .7rem;border-radius:.5rem;text-decoration:none;margin:.15rem 0;cursor:pointer}.sidebar a:hover,.sidebar a.active{background:rgba(255,255,255,.18);color:#fff}
+.main{flex:1;padding:1.4rem;min-width:0}.card{border:0;border-radius:1rem;box-shadow:0 8px 24px rgba(15,23,42,.07)}
+.page{display:none}.page.show{display:block}.kanban{display:flex;gap:1rem;overflow-x:auto}.kcol{min-width:250px;background:#eef2ff;border-radius:1rem;padding:.75rem}body.dark .kcol{background:#16213a}
+.deal{background:#fff;border-radius:.75rem;padding:.75rem;margin-bottom:.75rem;cursor:grab;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.price{border:2px solid transparent}.price.current{border-color:var(--brand)}
+@media(max-width:768px){.sidebar{width:70px}.sidebar a span,.brand span{display:none}}
+</style></head><body>
+<div class="layout">
+<nav class="sidebar"><div class="brand text-white fs-5 fw-bold mb-4"><i class="bi bi-kanban"></i> <span>CRM Pro</span></div>
+<a data-page="dashboard" class="active"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
+<a data-page="customers"><i class="bi bi-people"></i> <span>Customers</span></a>
+<a data-page="leads"><i class="bi bi-funnel"></i> <span>Leads</span></a>
+<a data-page="pipeline"><i class="bi bi-kanban"></i> <span>Pipeline</span></a>
+<a data-page="tasks"><i class="bi bi-check2-square"></i> <span>Tasks</span></a>
+<a data-page="plans"><i class="bi bi-credit-card"></i> <span>Plans & Billing</span></a>
+<div class="mt-4"><button class="btn btn-light btn-sm w-100" id="themeBtn"><i class="bi bi-moon"></i> Dark mode</button></div>
+<div class="text-white-50 small mt-3">Demo workspace<br>Data saves in your browser</div>
+</nav>
+<main class="main">
+<div class="alert alert-info py-2 small">Live demo of <strong>CRM Management SaaS</strong> — the full production app is Core PHP 8 + MySQL (in the GitHub repo). This demo runs fully in-browser so it can be hosted on Vercel.</div>
+
+<section class="page show" id="page-dashboard"><h4 class="mb-3">Dashboard</h4>
+<div class="row g-3" id="stats"></div>
+<div class="row g-3 mt-1"><div class="col-lg-7"><div class="card p-3"><h6>Revenue</h6><canvas id="rev" height="130"></canvas></div></div>
+<div class="col-lg-5"><div class="card p-3"><h6>Pipeline by stage</h6><canvas id="pipe" height="130"></canvas></div></div></div></section>
+
+<section class="page" id="page-customers"><h4>Customers</h4><div class="card p-3 mb-3"><form id="custForm" class="row g-2"><input type="hidden" id="cId">
+<div class="col-md-3"><input class="form-control" id="cName" placeholder="Name" required></div><div class="col-md-3"><input class="form-control" id="cEmail" placeholder="Email"></div>
+<div class="col-md-3"><input class="form-control" id="cCompany" placeholder="Company"></div><div class="col-md-2"><select class="form-select" id="cCat"><option>general</option><option>vip</option><option>partner</option></select></div>
+<div class="col-md-1"><button class="btn btn-primary w-100">Save</button></div></form></div>
+<input class="form-control mb-3" id="custSearch" placeholder="Search customers…">
+<div class="card p-0 overflow-auto"><table class="table mb-0"><thead><tr><th>Name</th><th>Email</th><th>Company</th><th>Category</th><th></th></tr></thead><tbody id="custBody"></tbody></table></div></section>
+
+<section class="page" id="page-leads"><h4>Leads</h4><div class="card p-3 mb-3"><form id="leadForm" class="row g-2"><input type="hidden" id="lId">
+<div class="col-md-3"><input class="form-control" id="lName" placeholder="Name" required></div><div class="col-md-3"><input class="form-control" id="lEmail" placeholder="Email"></div>
+<div class="col-md-2"><select class="form-select" id="lStatus"><option>new</option><option>contacted</option><option>qualified</option><option>lost</option><option>converted</option></select></div>
+<div class="col-md-2"><input class="form-control" type="number" min="0" max="100" id="lScore" placeholder="Score" value="50"></div>
+<div class="col-md-2"><button class="btn btn-primary w-100">Save lead</button></div></form></div>
+<div class="card p-0 overflow-auto"><table class="table mb-0"><thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Score</th><th></th></tr></thead><tbody id="leadBody"></tbody></table></div></section>
+
+<section class="page" id="page-pipeline"><h4>Sales Pipeline <button class="btn btn-primary btn-sm float-end" id="addDeal">+ Add deal</button></h4><div class="kanban" id="kanban"></div></section>
+
+<section class="page" id="page-tasks"><h4>Tasks</h4><div class="card p-3 mb-3"><form id="taskForm" class="row g-2">
+<div class="col-md-5"><input class="form-control" id="tTitle" placeholder="Task title" required></div>
+<div class="col-md-2"><select class="form-select" id="tPri"><option>low</option><option selected>medium</option><option>high</option><option>urgent</option></select></div>
+<div class="col-md-3"><input class="form-control" type="date" id="tDue"></div><div class="col-md-2"><button class="btn btn-primary w-100">Add task</button></div></form></div>
+<ul class="list-group" id="taskList"></ul></section>
+
+<section class="page" id="page-plans"><h4>Plans & Subscription</h4><div class="alert alert-primary" id="currentPlan"></div><div class="row g-3" id="planCards"></div>
+<h6 class="mt-4">Invoices</h6><div class="card p-0"><table class="table mb-0"><thead><tr><th>Invoice</th><th>Amount</th><th>Status</th></tr></thead><tbody id="invBody"></tbody></table></div></section>
+</main></div>
+<script>
+const seed={customers:[{id:1,name:'Sara Malik',email:'sara@acme.test',company:'Acme Traders',cat:'vip'},{id:2,name:'John Carter',email:'john@globex.test',company:'Globex',cat:'general'},{id:3,name:'Mei Chen',email:'mei@initech.test',company:'Initech',cat:'partner'}],
+leads:[{id:1,name:'Priya Nair',email:'priya@hooli.test',status:'qualified',score:82},{id:2,name:'Tom Becker',email:'tom@umbrella.test',status:'contacted',score:64},{id:3,name:'Fatima Noor',email:'fatima@cyberdyne.test',status:'new',score:47}],
+deals:[{id:1,title:'Acme CRM rollout',cust:'Acme Traders',value:4500,stage:'New'},{id:2,title:'Globex annual licence',cust:'Globex',value:12000,stage:'Proposal'},{id:3,title:'Initech onboarding',cust:'Initech',value:8000,stage:'Won'},{id:4,title:'Stark expansion',cust:'Stark Retail',value:6500,stage:'Negotiation'}],
+tasks:[{id:1,title:'Follow up with Acme',pri:'high',due:'',done:false},{id:2,title:'Prepare Globex demo',pri:'medium',due:'',done:false},{id:3,title:'Invoice Initech',pri:'low',due:'',done:true}],
+plan:'Professional',invoices:[{n:'INV-2026-00001',a:49,s:'paid'}]};
+let db=JSON.parse(localStorage.getItem('crmpro')||'null')||structuredClone(seed);
+const save=()=>localStorage.setItem('crmpro',JSON.stringify(db)); const stages=['New','Qualified','Proposal','Negotiation','Won','Lost'];
+const uid=()=>Date.now();
+function renderStats(){const won=db.deals.filter(d=>d.stage==='Won').reduce((s,d)=>s+d.value,0);
+ document.getElementById('stats').innerHTML=[['Customers',db.customers.length,'bi-people'],['Leads',db.leads.length,'bi-funnel'],['Deals',db.deals.length,'bi-kanban'],['Won revenue','$'+won.toLocaleString(),'bi-cash-stack'],['Open tasks',db.tasks.filter(t=>!t.done).length,'bi-clock'],['Current plan',db.plan,'bi-credit-card']].map(([l,v,i])=>`<div class="col-md-4 col-xl-2"><div class="card p-3"><i class="bi ${i} fs-4 text-primary"></i><div class="fs-5 fw-bold">${v}</div><div class="text-muted small">${l}</div></div></div>`).join('');
+ if(window._rc)window._rc.destroy(); if(window._pc)window._pc.destroy();
+ window._rc=new Chart(rev,{type:'line',data:{labels:['Jun','Jul','Aug','Sep','Oct','Nov'],datasets:[{label:'Revenue $',data:[3200,4100,3800,5600,6900,won],borderColor:'#4f46e5',backgroundColor:'rgba(79,70,229,.25)',fill:true,tension:.35}]}});
+ window._pc=new Chart(pipe,{type:'doughnut',data:{labels:stages,datasets:[{data:stages.map(s=>db.deals.filter(d=>d.stage===s).length),backgroundColor:['#818cf8','#6366f1','#4f46e5','#f59e0b','#22c55e','#ef4444']}]}});}
+function renderCustomers(){const q=(custSearch.value||'').toLowerCase();custBody.innerHTML=db.customers.filter(c=>!q||(c.name+c.email+c.company).toLowerCase().includes(q)).map(c=>`<tr><td>${c.name}</td><td>${c.email||''}</td><td>${c.company||''}</td><td><span class="badge bg-primary">${c.cat}</span></td><td class="text-end"><button class="btn btn-sm btn-outline-primary" onclick="editCust(${c.id})">Edit</button> <button class="btn btn-sm btn-outline-success" onclick="convertLeadPrompt('${c.name.replace(/'/g,"")}')">Deal</button> <button class="btn btn-sm btn-outline-danger" onclick="delCust(${c.id})">Delete</button></td></tr>`).join('');}
+function renderLeads(){leadBody.innerHTML=db.leads.map(l=>`<tr><td>${l.name}</td><td>${l.email||''}</td><td><span class="badge bg-info text-dark">${l.status}</span></td><td>${l.score}</td><td class="text-end"><button class="btn btn-sm btn-outline-primary" onclick="editLead(${l.id})">Edit</button> <button class="btn btn-sm btn-outline-success" onclick="toCustomer(${l.id})">Convert</button> <button class="btn btn-sm btn-outline-danger" onclick="delLead(${l.id})">Delete</button></td></tr>`).join('');}
+function renderKanban(){kanban.innerHTML=stages.map(s=>`<div class="kcol" data-stage="${s}"><h6>${s} <span class="badge bg-primary">$${db.deals.filter(d=>d.stage===s).reduce((a,d)=>a+d.value,0).toLocaleString()}</span></h6><div class="colbody">${db.deals.filter(d=>d.stage===s).map(d=>`<div class="deal" draggable="true" data-id="${d.id}"><strong>${d.title}</strong><div class="small text-muted">${d.cust||''}</div><div class="fw-bold">$${(+d.value).toLocaleString()}</div><button class="btn btn-sm btn-link text-danger p-0" onclick="delDeal(${d.id})">Delete</button></div>`).join('')}</div></div>`).join('');
+ document.querySelectorAll('.deal').forEach(c=>c.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',c.dataset.id)));
+ document.querySelectorAll('.kcol').forEach(col=>{col.addEventListener('dragover',e=>e.preventDefault());col.addEventListener('drop',e=>{e.preventDefault();const d=db.deals.find(x=>x.id==e.dataTransfer.getData('text/plain'));if(d){d.stage=col.dataset.stage;save();renderAll();}});});}
+function renderTasks(){taskList.innerHTML=db.tasks.map(t=>`<li class="list-group-item d-flex justify-content-between align-items-center"><span class="${t.done?'text-decoration-line-through text-muted':''}"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${t.id})"> ${t.title} <span class="badge bg-${t.pri==='urgent'?'danger':t.pri==='high'?'warning':'secondary'}">${t.pri}</span> <small class="text-muted">${t.due||''}</small></span><button class="btn btn-sm btn-outline-danger" onclick="delTask(${t.id})">Delete</button></li>`).join('');}
+function renderPlans(){const plans=[['Free',0,0],['Starter',19,190],['Professional',49,490],['Enterprise',99,990]];
+ currentPlan.innerHTML=`Current plan: <strong>${db.plan}</strong> — status: trial/active. Switching plans below updates this demo instantly and adds an invoice.`;
+ planCards.innerHTML=plans.map(([n,m,y])=>`<div class="col-md-3"><div class="card p-3 h-100 price ${db.plan===n?'current':''}"><h5>${n}</h5><div class="fs-4 fw-bold">$${m}<small class="fs-6 text-muted">/mo</small></div><div class="text-muted small">$${y}/year</div><button class="btn btn-primary btn-sm mt-3" onclick="setPlan('${n}',${m})">${db.plan===n?'Current plan':'Switch to '+n}</button></div></div>`).join('');
+ invBody.innerHTML=db.invoices.map(i=>`<tr><td>${i.n}</td><td>$${i.a}</td><td>${i.s}</td></tr>`).join('');}
+function renderAll(){renderStats();renderCustomers();renderLeads();renderKanban();renderTasks();renderPlans();}
+window.editCust=id=>{const c=db.customers.find(x=>x.id===id);cId.value=c.id;cName.value=c.name;cEmail.value=c.email||'';cCompany.value=c.company||'';cCat.value=c.cat;};
+window.delCust=id=>{if(confirm('Delete customer?')){db.customers=db.customers.filter(x=>x.id!==id);save();renderAll();}};
+window.editLead=id=>{const l=db.leads.find(x=>x.id===id);lId.value=l.id;lName.value=l.name;lEmail.value=l.email||'';lStatus.value=l.status;lScore.value=l.score;};
+window.delLead=id=>{db.leads=db.leads.filter(x=>x.id!==id);save();renderAll();};
+window.toCustomer=id=>{const l=db.leads.find(x=>x.id===id);db.customers.push({id:uid(),name:l.name,email:l.email,company:'',cat:'general'});l.status='converted';save();renderAll();alert(l.name+' converted to customer');};
+window.delDeal=id=>{db.deals=db.deals.filter(x=>x.id!==id);save();renderAll();};
+window.toggleTask=id=>{const t=db.tasks.find(x=>x.id===id);t.done=!t.done;save();renderAll();};
+window.delTask=id=>{db.tasks=db.tasks.filter(x=>x.id!==id);save();renderAll();};
+window.setPlan=(n,m)=>{db.plan=n;db.invoices.unshift({n:'INV-2026-'+String(db.invoices.length+1).padStart(5,'0'),a:m,s:m===0?'trial':'paid'});save();renderAll();};
+window.convertLeadPrompt=name=>{const t=prompt('Deal title',name+' deal');if(t){db.deals.push({id:uid(),title:t,cust:name,value:+prompt('Deal value $','1000')||0,stage:'New'});save();renderAll();showPage('pipeline');}};
+custForm.addEventListener('submit',e=>{e.preventDefault();const data={name:cName.value,email:cEmail.value,company:cCompany.value,cat:cCat.value};if(cId.value)Object.assign(db.customers.find(x=>x.id==cId.value),data);else db.customers.push({id:uid(),...data});cId.value='';e.target.reset();save();renderAll();});
+leadForm.addEventListener('submit',e=>{e.preventDefault();const data={name:lName.value,email:lEmail.value,status:lStatus.value,score:+lScore.value};if(lId.value)Object.assign(db.leads.find(x=>x.id==lId.value),data);else db.leads.push({id:uid(),...data});lId.value='';e.target.reset();save();renderAll();});
+taskForm.addEventListener('submit',e=>{e.preventDefault();db.tasks.push({id:uid(),title:tTitle.value,pri:tPri.value,due:tDue.value,done:false});e.target.reset();save();renderAll();});
+custSearch.addEventListener('input',renderCustomers);
+addDeal.addEventListener('click',()=>{const t=prompt('Deal title');if(!t)return;db.deals.push({id:uid(),title:t,cust:prompt('Customer/company','')||'',value:+prompt('Value $','1000')||0,stage:'New'});save();renderAll();});
+function showPage(p){document.querySelectorAll('.page').forEach(s=>s.classList.remove('show'));document.getElementById('page-'+p).classList.add('show');document.querySelectorAll('.sidebar a').forEach(a=>a.classList.toggle('active',a.dataset.page===p));renderAll();}
+document.querySelectorAll('.sidebar a[data-page]').forEach(a=>a.addEventListener('click',()=>showPage(a.dataset.page)));
+themeBtn.addEventListener('click',()=>{document.body.classList.toggle('dark');localStorage.setItem('crm-theme',document.body.classList.contains('dark')?'dark':'light');});
+if(localStorage.getItem('crm-theme')==='dark')document.body.classList.add('dark');
+renderAll();
+</script></body></html>
